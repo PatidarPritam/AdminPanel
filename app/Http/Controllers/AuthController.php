@@ -17,6 +17,8 @@ class AuthController extends Controller
      }
 
      public function addUser(UserRegisterRequest $request){
+//        dd($request->all());
+
         $student = Student::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -33,7 +35,7 @@ class AuthController extends Controller
      
          // Attempt to log the user in with the 'student' guard
          if (Auth::guard('student')->attempt($credentials)) {
-             return redirect()->intended('dashboard');
+            return redirect()->route('dashboard');
          }
      
          // Redirect back with input and an error message
@@ -42,5 +44,14 @@ class AuthController extends Controller
              ->withErrors(['email' => 'Invalid email or password']);
      }
      
+
+     public function dashboard(){
+        $student = Auth::guard('student')->user();
+        return view('dashboard', ['student' => $student]);
+
+    //    $students = Student::all();
+    //   return view('dashboard',compact('students'));
+
+     }
 
 }
