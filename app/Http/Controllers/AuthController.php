@@ -46,8 +46,11 @@ class AuthController extends Controller
      
 
      public function dashboard(){
-        $student = Auth::guard('student')->user();
-        return view('dashboard', ['student' => $student]);
+      
+        return redirect()->route('show');
+    //     $student = Auth::guard('student')->user();
+           
+    //    return view('dashboard', ['student' => $student]);
 
     //    $students = Student::all();
     //   return view('dashboard',compact('students'));
