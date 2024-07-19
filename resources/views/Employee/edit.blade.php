@@ -1,16 +1,16 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{{ asset('css/add.css') }}" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Edit Employee</title>
 </head>
 <body>
-       
     <h2>Edit Employee</h2>
-    
-    <form action="{{ url('update/' . $employee->id) }}" method="post" enctype="multipart/form-data">
+    <form id="edit-employee-form" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
             <label for="firstName">First Name:</label>
@@ -41,12 +41,42 @@
             @endif
             <input type="file" id="image" name="image">
         </div>
-        <button>Submit</button>
-
+        <button type="submit">Submit</button>
         <br><br>
-
-        <a href="/show">Back</a>
+        <a href="{{ url('/show') }}">Back</a>
     </form>
 
+    <script>
+        $(document).ready(function() {
+            // Setup CSRF token
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            // Handle form submission
+            $('#edit-employee-form').on('submit', function(event) {
+                event.preventDefault();
+                let formData = new FormData(this);
+                let id = '{{ $employee->id }}';
+
+                $.ajax({
+                    url: '{{ route("update", ":id") }}'.replace(':id', id),
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        alert('Employee updated successfully!');
+                        window.location.href = '{{ route("show") }}'; // Redirect to the employee list
+                    },
+                    error: function(response) {
+                        alert('Failed to update employee.');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
-</html>
+</html> -->

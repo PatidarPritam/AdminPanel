@@ -126,6 +126,39 @@ td img {
   background-color: #cc0000;
 }
 
+/* logout button styles */
+
+.logout {
+  position: absolute;
+  top: 85px;
+  right: 10px;
+  background-color: #ff3333;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.logout:hover {
+  background-color: #cc0000;
+}
+
+.logout a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.logout a:hover {
+  text-decoration: underline;
+}
+
+/* Add this to make the absolute positioning work correctly */
+body {
+  position: relative;
+}
+
 /* Responsive Design */
 
 @media (max-width: 768px) {
@@ -143,5 +176,5 @@ td img {
     height: 30px;
   }
 
-
+ 
 }

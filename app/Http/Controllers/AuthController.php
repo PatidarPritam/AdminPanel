@@ -27,6 +27,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
 
         ]);
+         return redirect()->route('login'); 
     
      }
      public function loginUser(loginRequest $request)
@@ -35,7 +36,7 @@ class AuthController extends Controller
      
          // Attempt to log the user in with the 'student' guard
          if (Auth::guard('student')->attempt($credentials)) {
-            return redirect()->route('dashboard');
+            return redirect()->route('show');
          }
      
          // Redirect back with input and an error message
@@ -44,8 +45,13 @@ class AuthController extends Controller
              ->withErrors(['email' => 'Invalid email or password']);
      }
      
+     public function logoutUser(){
+        Auth::guard('student')->logout();
+        return redirect()->route('login');
 
-     public function dashboard(){
+     }
+
+  /*   public function dashboard(){
       
         return redirect()->route('show');
     //     $student = Auth::guard('student')->user();
@@ -55,6 +61,6 @@ class AuthController extends Controller
     //    $students = Student::all();
     //   return view('dashboard',compact('students'));
 
-     }
+     } */
 
 }

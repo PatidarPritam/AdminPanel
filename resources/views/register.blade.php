@@ -23,11 +23,12 @@
   
   <input type="password" name="password_confirmation" placeholder="Enter confirm password here" required>
   <br> <br> 
-  <button>Submit</button>
+  
+  <button type="submit">Submit</button>
 
   <br> <br>
 
-  <!-- <a href="/show"> back</a> -->
+  <p>Already have an account? <a href="{{ url('/login') }}">login here</a></p>
  </form>
 
 
