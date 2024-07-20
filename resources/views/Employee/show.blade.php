@@ -175,7 +175,7 @@
                         `);
                     },
                     error: function(response) {
-                        alert('Failed to add employee.');
+                        alert("Failed to add employee because the email or password already exists.");
                     }
                 });
             });
