@@ -9,7 +9,7 @@
       .error-message {
             color: red;
             display: none; /* Initially hidden */
-        } 
+      }
         .visible {
             display: block; /* Display error message */
         }

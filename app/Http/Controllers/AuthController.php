@@ -36,7 +36,9 @@ class AuthController extends Controller
      
          // Attempt to log the user in with the 'student' guard
          if (Auth::guard('student')->attempt($credentials)) {
-            return redirect()->route('show');
+           // return redirect()->route('show');
+            return redirect('/show')->with('success', 'You are successfully logged in'); 
+
          }
      
          // Redirect back with input and an error message
@@ -45,11 +47,16 @@ class AuthController extends Controller
              ->withErrors(['email' => 'Invalid email or password']);
      }
      
-     public function logoutUser(){
-        Auth::guard('student')->logout();
-        return redirect()->route('login');
-
-     }
+     public function logoutUser(Request $request){
+        // Perform logout
+        Auth::logout();
+    
+        // Flash a success message to the session
+        $request->session()->flash('success', 'You have been logged out successfully.');
+    
+        // Redirect to the desired route
+        return redirect('/login');
+    }
 
   /*   public function dashboard(){
       

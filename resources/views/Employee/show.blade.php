@@ -4,12 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{{ asset('css/show.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/modal.css') }}" rel="stylesheet"> <!-- Link to the new modal CSS -->
+    <link href="{{ asset('css/modal.css') }}" rel="stylesheet"><!-- Link to the new modal CSS -->
+    <link href="{{ asset('css/toast.css') }}" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Employee CRUD Table</title>
 </head>
 <body>
+@if(Session::has('success'))
+        <div class="toast" id="toast">
+            {{ Session::get('success') }}
+            <span class="close" id="toast-close">&times;</span>
+        </div>
+    @endif
+
     <h1>Employee Table</h1>
    
     <button id="open-add-modal" class="btn btn-primary">Add Employee</button>
@@ -255,6 +263,28 @@
                 }
             });
         });
+
+            // Show toast notification and auto-hide
+            function showToast(message) {
+                let toast = $('#toast');
+                toast.text(message);
+                toast.addClass('show');
+                setTimeout(function() {
+                    toast.removeClass('show');
+                }, 5000); // 5 seconds
+            }
+
+            // Automatically show the toast if a success message exists
+            @if(Session::has('success'))
+                showToast('{{ Session::get('success') }}');
+            @endif
+
+            // Close toast notification manually
+            $('#toast-close').on('click', function() {
+                $('#toast').removeClass('show');
+            });
+        
     </script>
+    
 </body>
 </html>
