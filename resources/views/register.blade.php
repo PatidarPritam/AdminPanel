@@ -36,7 +36,7 @@
                 {{ $message }}
             </div>
         @enderror
-        <input type="number" name="phone" placeholder="Enter phone number here" required>
+        <input type="tel" name="phone" placeholder="Enter phone number here" required>
         <br><br>
 
         <input type="text" name="address" placeholder="Enter address here" required>

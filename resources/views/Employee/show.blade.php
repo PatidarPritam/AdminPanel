@@ -6,20 +6,20 @@
     <link href="{{ asset('css/show.css') }}" rel="stylesheet">
     <link href="{{ asset('css/modal.css') }}" rel="stylesheet"><!-- Link to the new modal CSS -->
     <link href="{{ asset('css/toast.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> -->
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Employee CRUD Table</title>
 </head>
 <body>
-@if(Session::has('success'))
-        <div class="toast" id="toast">
-            {{ Session::get('success') }}
-            <span class="close" id="toast-close">&times;</span>
-        </div>
-    @endif
 
     <h1>Employee Table</h1>
-   
+    @if (!empty($success))
+    <h1>{{$success}}</h1>
+@endif
     <button id="open-add-modal" class="btn btn-primary">Add Employee</button>
     <button class="logout"><a href="{{url('logout')}}">Logout</a></button>
 
@@ -135,156 +135,150 @@
     </div>
 
     <script>
-        $(document).ready(function() {
-            // Setup CSRF token
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+    $(document).ready(function() {
 
-            // Open add modal
-            $('#open-add-modal').on('click', function() {
-                $('#add-modal').show();
-            });
+        // Setup CSRF token for AJAX requests
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
 
-            // Close add modal
-            $('#close-add-modal').on('click', function() {
-                $('#add-modal').hide();
-            });
+        // Open add modal
+        $('#open-add-modal').on('click', function() {
+            $('#add-modal').show();
+        });
 
-            // Handle add form submission
-            $('#add-employee-form').on('submit', function(event) {
-                event.preventDefault();
-                let formData = new FormData(this);
+        // Close add modal
+        $('#close-add-modal').on('click', function() {
+            $('#add-modal').hide();
+        });
 
-                $.ajax({
-                    url: '{{ route("addEmployee") }}',
-                    method: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        $('#add-modal').hide();
-                        let employee = response.employee;
-                        $('#employee-table tbody').append(`
-                            <tr data-id="${employee.id}">
-                                <td><img src="/storage/${employee.img}" alt="Employee Image" style="width:100px;height:auto;"></td>
-                                <td>${employee.firstName}</td>
-                                <td>${employee.lastName}</td>
-                                <td>${employee.email}</td>
-                                <td>${employee.address}</td>
-                                <td>${employee.phone}</td>
-                                <td>
-                                    <button class="edit-button" data-id="${employee.id}">Edit</button>
-                                    <button class="delete-button" data-id="${employee.id}">Delete</button>
-                                </td>
-                            </tr>
-                        `);
-                    },
-                    error: function(response) {
-                        alert("Failed to add employee because the email or password already exists.");
-                    }
-                });
-            });
+        // Handle add form submission
+        $('#add-employee-form').on('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
 
-            // Open edit modal
-            $('#employee-table').on('click', '.edit-button', function() {
-                let id = $(this).data('id');
+            let formData = new FormData(this);
 
-                $.ajax({
-                    url: '{{ route("edit", ":id") }}'.replace(':id', id),
-                    method: 'GET',
-                    success: function(response) {
-                        let employee = response.employee;
-                        $('#edit-id').val(employee.id);
-                        $('#edit-firstName').val(employee.firstName);
-                        $('#edit-lastName').val(employee.lastName);
-                        $('#edit-email').val(employee.email);
-                        $('#edit-address').val(employee.address);
-                        $('#edit-phone').val(employee.phone);
-                        $('#edit-modal').show();
-                    },
-                    error: function(response) {
-                        alert('Failed to retrieve employee details.');
-                    }
-                });
-            });
-
-            // Close edit modal
-            $('#close-edit-modal').on('click', function() {
-                $('#edit-modal').hide();
-            });
-
-            // Handle edit form submission
-            $('#edit-employee-form').on('submit', function(event) {
-                event.preventDefault();
-                let formData = new FormData(this);
-                let id = $('#edit-id').val();
-
-                $.ajax({
-                    url: '{{ route("update", ":id") }}'.replace(':id', id),
-                    method: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        $('#edit-modal').hide();
-                        let employee = response.employee;
-                        let row = $(`#employee-table tbody tr[data-id="${employee.id}"]`);
-                        row.find('td:eq(0) img').attr('src', `/storage/${employee.img}`);
-                        row.find('td:eq(1)').text(employee.firstName);
-                        row.find('td:eq(2)').text(employee.lastName);
-                        row.find('td:eq(3)').text(employee.email);
-                        row.find('td:eq(4)').text(employee.address);
-                        row.find('td:eq(5)').text(employee.phone);
-                    },
-                    error: function(response) {
-                        alert('Failed to update employee.');
-                    }
-                });
-            });
-
-            // Handle delete button
-            $('#employee-table').on('click', '.delete-button', function() {
-                let id = $(this).data('id');
-
-                if (confirm('Are you sure you want to delete this employee?')) {
-                    $.ajax({
-                        url: '{{ route("delete", ":id") }}'.replace(':id', id),
-                        method: 'DELETE',
-                        success: function(response) {
-                            $(`#employee-table tbody tr[data-id="${id}"]`).remove();
-                        },
-                        error: function(response) {
-                            alert('Failed to delete employee.');
-                        }
-                    });
+            $.ajax({
+                url: '{{ route("addEmployee") }}',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $('#add-modal').hide();
+                    let employee = response.employee;
+                    $('#employee-table tbody').append(`
+                        <tr data-id="${employee.id}">
+                            <td><img src="/storage/${employee.img}" alt="Employee Image" style="width:100px;height:auto;"></td>
+                            <td>${employee.firstName}</td>
+                            <td>${employee.lastName}</td>
+                            <td>${employee.email}</td>
+                            <td>${employee.address}</td>
+                            <td>${employee.phone}</td>
+                            <td>
+                                <button class="edit-button" data-id="${employee.id}">Edit</button>
+                                <button class="delete-button" data-id="${employee.id}">Delete</button>
+                            </td>
+                        </tr>
+                    `);
+                    toastr.success('Employee added successfully.');
+                },
+                error: function(response) {
+                    alert("Failed to add employee.");
                 }
             });
         });
 
-            // Show toast notification and auto-hide
-            function showToast(message) {
-                let toast = $('#toast');
-                toast.text(message);
-                toast.addClass('show');
-                setTimeout(function() {
-                    toast.removeClass('show');
-                }, 5000); // 5 seconds
-            }
+        // Open edit modal
+        $('#employee-table').on('click', '.edit-button', function() {
+            let id = $(this).data('id');
 
-            // Automatically show the toast if a success message exists
-            @if(Session::has('success'))
-                showToast('{{ Session::get('success') }}');
-            @endif
-
-            // Close toast notification manually
-            $('#toast-close').on('click', function() {
-                $('#toast').removeClass('show');
+            $.ajax({
+                url: '{{ route("edit", ":id") }}'.replace(':id', id),
+                method: 'GET',
+                success: function(response) {
+                    let employee = response.employee;
+                    $('#edit-id').val(employee.id);
+                    $('#edit-firstName').val(employee.firstName);
+                    $('#edit-lastName').val(employee.lastName);
+                    $('#edit-email').val(employee.email);
+                    $('#edit-address').val(employee.address);
+                    $('#edit-phone').val(employee.phone);
+                    $('#edit-modal').show();
+                },
+                error: function(response) {
+                    alert('Failed to retrieve employee details.');
+                }
             });
-        
-    </script>
-    
+        });
+
+        // Close edit modal
+        $('#close-edit-modal').on('click', function() {
+            $('#edit-modal').hide();
+        });
+
+        // Handle edit form submission
+        $('#edit-employee-form').on('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            let formData = new FormData(this);
+            let id = $('#edit-id').val();
+
+            $.ajax({
+                url: '{{ route("update", ":id") }}'.replace(':id', id),
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $('#edit-modal').hide();
+                    let employee = response.employee;
+                    let row = $(`#employee-table tbody tr[data-id="${employee.id}"]`);
+                    row.find('td:eq(0) img').attr('src', `/storage/${employee.img}`);
+                    row.find('td:eq(1)').text(employee.firstName);
+                    row.find('td:eq(2)').text(employee.lastName);
+                    row.find('td:eq(3)').text(employee.email);
+                    row.find('td:eq(4)').text(employee.address);
+                    row.find('td:eq(5)').text(employee.phone);
+                    toastr.success('Employee updated successfully.');
+                },
+                error: function(response) {
+                    alert('Failed to update employee.');
+                }
+            });
+        });
+
+        // Handle delete button
+        $('#employee-table').on('click', '.delete-button', function() {
+            let id = $(this).data('id');
+
+            if (confirm('Are you sure you want to delete this employee?')) {
+                $.ajax({
+                    url: '{{ route("delete", ":id") }}'.replace(':id', id),
+                    method: 'DELETE',
+                    success: function(response) {
+                        $(`#employee-table tbody tr[data-id="${id}"]`).remove();
+                        toastr.success('Employee deleted successfully.');
+                    },
+                    error: function(response) {
+                        alert('Failed to delete employee.');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- <script>
+        @if(Session::has('success'))
+            toastr.success("{{ Session::get('success') }}");
+        @endif
+
+        @if(Session::has('error'))
+            toastr.error("{{ Session::get('error') }}");
+        @endif
+    </script> -->
 </body>
 </html>

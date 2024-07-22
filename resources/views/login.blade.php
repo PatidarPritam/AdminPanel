@@ -46,14 +46,14 @@
             <p>Don't have an account? <a href="{{ url('/register') }}">Register here</a></p>
         </form>
     </div>
-    @if(Session::has('success'))
+    <!-- @if(Session::has('success'))
         <div class="toast" id="toast">
             {{ Session::get('success') }}
             <span class="close" id="toast-close">&times;</span>
         </div>
-    @endif
+    @endif -->
 
-    <script>
+    <!-- <script>
 
         $(document).ready(function() {
             // Show toast notification and auto-hide
@@ -76,7 +76,7 @@
                 $('#toast').removeClass('show');
             });
         });
-    </script>
+    </script> -->
      
 </body>
 </html>

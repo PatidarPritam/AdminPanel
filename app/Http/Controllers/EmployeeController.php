@@ -32,8 +32,14 @@ class EmployeeController extends Controller
             'phone' => $request->phone,
             'img' => $imagePath
         ]);
-
+        // return response()->json([
+        //     'success' => 'Employee added successfully!',
+        //     'message' => 'Employee added successfully!',
+        //     'employee' => $employee
+        // ]);
+       //  toastr()->success('employee added successfully!');
         return response()->json(['employee' => $employee]);
+      
     }
 
     public function show()
@@ -51,8 +57,10 @@ class EmployeeController extends Controller
             }
             $employee->delete();
         }
-
+        // return redirect()->route('show')->with('error', 'Employee not found.');
+        //flash()->success('employee deleted successfully');  
         return response()->json(['success' => true]);
+        
     }
 
     public function edit($id)
@@ -85,7 +93,7 @@ class EmployeeController extends Controller
 
             $employee->save();
         }
-
+      //  flash()->success('employee update successfully');  
         return response()->json(['employee' => $employee]);
     }
 }

@@ -27,8 +27,8 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
 
         ]);
-        return redirect()->route('login')->with('success', 'Registration successful! Please login.');
-    
+        flash()->success('registration  successfully');  
+        return redirect()->route('login');
      }
      public function loginUser(loginRequest $request)
      {
@@ -37,7 +37,9 @@ class AuthController extends Controller
          // Attempt to log the user in with the 'student' guard
          if (Auth::guard('student')->attempt($credentials)) {
            // return redirect()->route('show');
-            return redirect('/show')->with('success', 'You are successfully logged in'); 
+           // Display a success toast with no title
+            flash()->success('login successfully');  
+            return redirect('/show');
 
          }
      
@@ -52,9 +54,10 @@ class AuthController extends Controller
         Auth::logout();
     
         // Flash a success message to the session
-        $request->session()->flash('success', 'You have been logged out successfully.');
+      //  $request->session()->flash('success', 'You have been logged out successfully.');
     
         // Redirect to the desired route
+        flash()->success('logout successfully');  
         return redirect('/login');
     }
 
